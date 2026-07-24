@@ -14,25 +14,22 @@ public class PaymentService {
     private final PaymentRepository paymentRepository;
     private final OrderRepository ordersRepository;
 
-    public PaymentService(PaymentRepository paymentRepository,
-                          OrderRepository ordersRepository) {
+    public PaymentService(PaymentRepository paymentRepository, OrderRepository orderRepository){
         this.paymentRepository = paymentRepository;
-        this.ordersRepository = ordersRepository;
+        this.ordersRepository=orderRepository;
     }
 
-    public Payment makePayment(Long orderId) {
-
-        Orders order = ordersRepository.findById(orderId).orElseThrow(() -> new RuntimeException("Order not found"));
-        Payment payment = new Payment();
+    public Payment makePayment(Long orderId){
+        Orders order=ordersRepository.findById(orderId).orElseThrow(()->new RuntimeException("order not found"));
+        Payment payment=new Payment();
         payment.setOrder(order);
         payment.setAmount(order.getAmount());
-        payment.setStatus("SUCCESS");
+        payment.setStatus("placed");
         payment.setPaidAt(LocalDateTime.now());
-
         return paymentRepository.save(payment);
     }
 
     public Payment getPayment(Long id) {
-        return paymentRepository.findById(id).orElseThrow(() -> new RuntimeException("Payment not found"));
+        return paymentRepository.findById(id).orElseThrow(()->new RuntimeException("payment not found"));
     }
 }

@@ -19,7 +19,7 @@ public class CartController {
     }
 
 
-    @GetMapping
+    @GetMapping("/{userId}")
     public Cart getCart(@PathVariable Long userId){
         Users user=userRepository.findById(userId).orElseThrow(()-> new RuntimeException("no user found"));
         return cartService.getOrCreateCart(user);
@@ -32,4 +32,6 @@ public class CartController {
         cartService.clearCart(cart);
         return "Cart cleared";
     }
+
+
 }

@@ -23,12 +23,12 @@ public class CartItemsService {
 
     public CartItemsService(CartItemsRepository cartItemsRepository, CartRepository cartRepository,
                             ProductRepository productRepository,
-                            UserRepository userRepository, CartItemsRepository cartItemsRepository1, CartRepository cartRepository1, ProductRepository productRepository1, UserRepository userRepository1) {
+                            UserRepository userRepository) {
 
-        this.cartItemsRepository = cartItemsRepository1;
-        this.cartRepository = cartRepository1;
-        this.productRepository = productRepository1;
-        this.userRepository = userRepository1;
+        this.cartItemsRepository = cartItemsRepository;
+        this.cartRepository = cartRepository;
+        this.productRepository = productRepository;
+        this.userRepository = userRepository;
     }
 
     public CartItems addToCart(Long userId, Long productId, Integer quantity) {
@@ -36,13 +36,12 @@ public class CartItemsService {
         Users user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        Cart cart = cartRepository.findByUser(user);
-
-        if (cart == null) {
-            cart = new Cart();
-            cart.setUser(user);
-            cart = cartRepository.save(cart);
-        }
+        Cart cart = cartRepository.findByUser(user).orElseGet(()->{
+            Cart newCart=new Cart();
+            newCart.setUser(user);
+            newCart.setCreatedAt(LocalDateTime.now());
+            return cartRepository.save(newCart);
+        });
 
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new RuntimeException("Product not found"));
@@ -60,27 +59,19 @@ public class CartItemsService {
 
         Users user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-
-        Optional<Cart> cart = cartRepository.findByUser(user);
-
+        Cart cart=cartRepository.findByUser(user).orElseThrow(()->new RuntimeException("user nto found"));
         return cartItemsRepository.findByCart(cart);
     }
 
-    public CartItems updateQuantity(Long id, Integer quantity) {
-
-        CartItems cartItem = cartItemsRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Cart Item not found"));
-
-        cartItem.setQuantity(quantity);
-
-        return cartItemsRepository.save(cartItem);
+    public CartItems updateQuantity(Long id, Integer quantity){
+        CartItems cartItems=cartItemsRepository.findById(id).orElseThrow(()->new RuntimeException("items not found"));
+        cartItems.setQuantity(quantity);
+        return cartItemsRepository.save(cartItems);
     }
 
     public void deleteCartItem(Long id) {
 
-        CartItems cartItem = cartItemsRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Cart Item not found"));
-
+        CartItems cartItem = cartItemsRepository.findById(id).orElseThrow(() -> new RuntimeException("items not found"));
         cartItemsRepository.delete(cartItem);
     }
 

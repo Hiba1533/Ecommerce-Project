@@ -1,5 +1,6 @@
 package com.example.Ecommerce.Project.Service;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -11,7 +12,7 @@ import java.util.Date;
 @Service
 public class JwtService {
 
-    private final String SECRET =
+    private static final String SECRET =
             "mysecretkeymysecretkeymysecretkey12";
 
     private final SecretKey key =
@@ -21,10 +22,33 @@ public class JwtService {
 
         return Jwts.builder()
                 .setSubject(email)
-                .signWith(key, SignatureAlgorithm.HS256)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis()+1000*60*60*24))
+                .setExpiration(new Date(System.currentTimeMillis() + 86400000))
+                .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
     }
 
+    public String extractUsername(String token) {
+
+        return extractClaims(token).getSubject();
+    }
+
+    public boolean validateToken(String token) {
+
+        try {
+            extractClaims(token);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    private Claims extractClaims(String token) {
+
+        return Jwts.parser()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+    }
 }

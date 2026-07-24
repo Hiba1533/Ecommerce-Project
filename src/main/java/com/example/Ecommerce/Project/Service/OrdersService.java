@@ -1,5 +1,6 @@
 package com.example.Ecommerce.Project.Service;
 
+import com.example.Ecommerce.Project.Entity.OrderStatus;
 import com.example.Ecommerce.Project.Entity.Orders;
 import com.example.Ecommerce.Project.Entity.Users;
 import com.example.Ecommerce.Project.Repository.OrderRepository;
@@ -31,6 +32,7 @@ public class OrdersService {
         newOrder.setPhone(order.getPhone());
         newOrder.setAddress(order.getAddress());
         newOrder.setAmount(order.getAmount());
+        newOrder.setStatus(OrderStatus.pending);
         newOrder.setOrderDate(LocalDateTime.now());
         return ordersRepository.save(newOrder);
     }

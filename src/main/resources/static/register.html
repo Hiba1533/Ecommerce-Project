@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="container">
+    <h1>E-Commerce Store</h1>
+    <div class="card">
+        <h2>Create Account</h2>
+        <input type="text" id="username" placeholder="Username">
+        <input type="email" id="email" placeholder="Email">
+        <input type="password" id="password" placeholder="Password">
+        <input type="text" id="phone" placeholder="Phone Number">
+
+        <!-- Full width button -->
+        <div class="btn-block">
+            <button onclick="register()" class="btn-success">Register</button>
+        </div>
+
+        <p>
+            Already have an account?
+            <a href="index.html">Login</a>
+        </p>
+    </div>
+</div>
+<script src="js/auth.js"></script>
+</body>
+</html>
