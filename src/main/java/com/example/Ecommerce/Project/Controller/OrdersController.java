@@ -2,6 +2,7 @@ package com.example.Ecommerce.Project.Controller;
 
 import com.example.Ecommerce.Project.Entity.Orders;
 import com.example.Ecommerce.Project.Service.OrdersService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -33,6 +34,14 @@ public class OrdersController {
     public Orders getOrderById(@PathVariable Long id) {
 
         return ordersService.getOrderById(id);
+    }
+
+    @PutMapping("/{id}/pay")
+    public ResponseEntity<?> payOrder(
+            @PathVariable Long id
+    ){
+        Orders orders = ordersService.payOrder(id);
+        return ResponseEntity.ok(orders);
     }
 
 }

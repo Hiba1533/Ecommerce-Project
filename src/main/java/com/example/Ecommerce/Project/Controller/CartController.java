@@ -6,6 +6,8 @@ import com.example.Ecommerce.Project.Repository.UserRepository;
 import com.example.Ecommerce.Project.Service.CartService;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
+
 @RestController
 @RequestMapping("/cart")
 public class CartController {
@@ -23,6 +25,17 @@ public class CartController {
     public Cart getCart(@PathVariable Long userId){
         Users user=userRepository.findById(userId).orElseThrow(()-> new RuntimeException("no user found"));
         return cartService.getOrCreateCart(user);
+    }
+
+    @GetMapping("/total/{userId}")
+    public BigDecimal getCartTotal(@PathVariable Long userId) {
+
+        Users user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Cart cart = cartService.getOrCreateCart(user);
+
+        return cartService.getCartTotal(cart);
     }
 
     @DeleteMapping("/{userId}")

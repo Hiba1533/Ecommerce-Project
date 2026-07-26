@@ -39,6 +39,9 @@ public class Orders {
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
 
+    @Enumerated(EnumType.STRING)
+    private PaymentStatus paymentStatus = PaymentStatus.unpaid;
+
     private LocalDateTime orderDate;
 
 }
