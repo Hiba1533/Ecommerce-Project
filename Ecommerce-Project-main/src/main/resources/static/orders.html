@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orders</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="container">
+
+    <h1>Place Order</h1>
+
+    <input type="text" id="name" placeholder="Name">
+
+    <input type="text" id="phone" placeholder="Phone">
+
+    <input type="text" id="address" placeholder="Address">
+
+    <p>
+        <b>Total Amount:</b>
+        Rs. <span id="totalAmount">0</span>
+    </p>
+
+    <div class="btn-block">
+        <button onclick="placeOrder()" class="btn-success">
+            Place Order
+        </button>
+    </div>
+
+    <hr>
+
+    <h2>My Orders</h2>
+
+    <div id="orders"></div>
+
+</div>
+
+<script src="js/order.js"></script>
+
+</body>
+</html>
