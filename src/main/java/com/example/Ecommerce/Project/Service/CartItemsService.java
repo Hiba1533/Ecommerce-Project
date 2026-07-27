@@ -32,26 +32,27 @@ public class CartItemsService {
     }
 
     public CartItems addToCart(Long userId, Long productId, Integer quantity) {
-
         Users user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
+        Optional<Cart> optionalCart = cartRepository.findByUser(user);
+        Cart cart;
 
-        Cart cart = cartRepository.findByUser(user).orElseGet(()->{
-            Cart newCart=new Cart();
-            newCart.setUser(user);
-            newCart.setCreatedAt(LocalDateTime.now());
-            return cartRepository.save(newCart);
-        });
+        if (optionalCart.isPresent()) {
+            cart = optionalCart.get();
+        } else {
+            cart = new Cart();
+            cart.setUser(user);
+            cart.setCreatedAt(LocalDateTime.now());
+            cart = cartRepository.save(cart);
+        }
 
-        Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new RuntimeException("Product not found"));
+        Product product = productRepository.findById(productId).orElseThrow(() -> new RuntimeException("Product not found"));
 
         CartItems cartItem = new CartItems();
         cartItem.setCart(cart);
         cartItem.setProduct(product);
         cartItem.setQuantity(quantity);
         cartItem.setAddAt(LocalDateTime.now());
-
         return cartItemsRepository.save(cartItem);
     }
 
@@ -70,7 +71,6 @@ public class CartItemsService {
     }
 
     public void deleteCartItem(Long id) {
-
         CartItems cartItem = cartItemsRepository.findById(id).orElseThrow(() -> new RuntimeException("items not found"));
         cartItemsRepository.delete(cartItem);
     }

@@ -2,8 +2,12 @@ package com.example.Ecommerce.Project.Controller;
 
 import com.example.Ecommerce.Project.Entity.Product;
 import com.example.Ecommerce.Project.Service.ProductService;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -16,8 +20,19 @@ public class ProductController {
     }
 
     @PostMapping
-    public Product addProduct(@RequestBody Product product){
-        return productService.addProduct(product);
+    public ResponseEntity<?> addProduct(@RequestPart Product product, @RequestPart MultipartFile imageFile) throws IOException {
+        Product savedProduct= productService.addProduct(product, imageFile);
+        return ResponseEntity.ok(savedProduct);
+    }
+
+    @GetMapping("/image/{id}")
+    public ResponseEntity<byte[]> getImage(@PathVariable Long id) {
+
+        Product product = productService.getById(id);
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(product.getImageType()))
+                .body(product.getImageData());
     }
 
     @GetMapping

@@ -14,31 +14,35 @@ async function loadProducts() {
     products.forEach(product => {
 
         html += `
-        <div class="card">
+<div class="card">
 
-            <h2>${product.name}</h2>
+    <img
+        src="${BASE_URL}/product/image/${product.id}"
+        alt="${product.name}"
+        class="product-image">
 
-            <p>${product.description}</p>
+    <h2>${product.name}</h2>
 
-            <p><b>Price:</b> Rs. ${product.price}</p>
+    <p>${product.description}</p>
 
-            <p><b>Stock:</b> ${product.stock}</p>
+    <p><b>Price:</b> Rs. ${product.price}</p>
 
-            <p><b>Category:</b> ${product.category.name}</p>
+    <p><b>Stock:</b> ${product.stock}</p>
 
-            <input
-                type="number"
-                id="qty${product.id}"
-                value="1"
-                min="1">
+    <p><b>Category:</b> ${product.category.name}</p>
 
-            <button onclick="addToCart(${product.id})">
-                Add To Cart
-            </button>
+    <input
+        type="number"
+        id="qty${product.id}"
+        value="1"
+        min="1">
 
-        </div>
-        `;
-    });
+    <button onclick="addToCart(${product.id})">
+        Add To Cart
+    </button>
+
+</div>
+`;    });
 
     document.getElementById("products").innerHTML = html;
 }

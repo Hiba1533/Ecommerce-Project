@@ -23,8 +23,8 @@ public class CategoryController {
     }
 
     @GetMapping
-    public List<Category> getCategory(@RequestBody Category category){
-        return categoryService.getCategory(category);
+    public List<Category> getCategory(){
+        return categoryService.getCategory();
     }
 
     @PutMapping("/{id}")

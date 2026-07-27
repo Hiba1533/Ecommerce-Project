@@ -1,5 +1,6 @@
 package com.example.Ecommerce.Project.Entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -30,6 +31,13 @@ public class Product {
 
     @Column(nullable = false)
     private Integer stock;
+
+    private String imageName;
+    private String imageType;
+
+    @Lob    //large object
+    @JsonIgnore
+    private byte[] imageData;
 
     @ManyToOne
     @JoinColumn(name="category_id", nullable = false)

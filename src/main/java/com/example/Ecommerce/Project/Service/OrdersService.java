@@ -34,6 +34,7 @@ public class OrdersService {
         newOrder.setPhone(order.getPhone());
         newOrder.setAddress(order.getAddress());
         Cart cart = cartService.getOrCreateCart(user);
+
         BigDecimal totalAmount = BigDecimal.ZERO;
 
         for (CartItems item : cart.getCartItems()) {

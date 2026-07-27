@@ -374,6 +374,14 @@ p {
     font-weight: 600;
 }
 
+.product-image{
+    width:200px;
+    height:200px;
+    object-fit:cover;
+    border-radius:8px;
+    margin-bottom:10px;
+}
+
 /* ----- RESPONSIVE ADJUSTMENTS ----- */
 @media (max-width: 768px) {
     .cart-summary {
