@@ -1,176 +1,175 @@
 const BASE_URL = "http://localhost:8080";
 
-const userId = 1;
+const userId = localStorage.getItem("userId");
+const token = localStorage.getItem("token");
 
 window.onload = function () {
 
+    if (!userId) {
+        alert("Please login first");
+        window.location.href = "index.html";
+        return;
+    }
+
+    loadTotal();
     loadOrders();
-
-    loadCartTotal();
-
 };
 
+async function loadTotal() {
 
-async function loadCartTotal() {
+    const response = await fetch(
+        `${BASE_URL}/cart/total/${userId}`,
+        {
+            headers: {
+                "Authorization": token
+            }
+        }
+    );
 
-    const response = await fetch(BASE_URL + "/cart/total/" + userId);
+    if (response.ok) {
 
-    const total = await response.text();
+        const total = await response.json();
+        document.getElementById("totalAmount").innerHTML = total;
 
-    document.getElementById("totalAmount").innerHTML = total;
+    } else {
 
+        alert("Unable to load total.");
+
+    }
 }
-
-
 
 async function placeOrder() {
 
     const order = {
 
         name: document.getElementById("name").value,
-
         phone: document.getElementById("phone").value,
-
         address: document.getElementById("address").value
 
     };
 
-
-    const response = await fetch(BASE_URL + "/orders/" + userId, {
-
-        method: "POST",
-
-        headers: {
-            "Content-Type": "application/json"
-        },
-
-        body: JSON.stringify(order)
-
-    });
-
+    const response = await fetch(
+        `${BASE_URL}/orders/${userId}`,
+        {
+            method: "POST",
+            headers: {
+                "Authorization": "Bearer" + token,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(order)
+        }
+    );
 
     if (response.ok) {
 
-        alert("Order Placed Successfully");
-
+        alert("Order placed successfully!");
 
         document.getElementById("name").value = "";
-
         document.getElementById("phone").value = "";
-
         document.getElementById("address").value = "";
 
-
+        loadTotal();
         loadOrders();
 
-        loadCartTotal();
+    } else {
+
+        alert(await response.text());
 
     }
-
-    else {
-
-        alert("Unable to Place Order");
-
-    }
-
 }
-
-
 
 async function loadOrders() {
 
-    const response = await fetch(BASE_URL + "/orders/" + userId);
+    const response = await fetch(
+        `${BASE_URL}/orders/${userId}`,
+        {
+            headers: {
+                "Authorization": token
+            }
+        }
+    );
+
+    if (!response.ok) {
+
+        alert("Unable to load orders");
+        return;
+
+    }
 
     const orders = await response.json();
 
+    console.log("Orders:", orders);
 
     let html = "";
 
-
     orders.forEach(order => {
-
 
         html += `
 
-        <div class="order" id="order-${order.id}">
+        <div class="card">
 
+            <h3>Order ID: ${order.id}</h3>
 
-            <p><b>Order ID:</b> ${order.id}</p>
+            <p>
+                <b>Total Amount:</b>
+                Rs. ${order.amount}
+            </p>
 
+            <p>
+                <b>Order Status:</b>
+                ${order.status}
+            </p>
 
-            <p><b>Name:</b> ${order.name}</p>
+            <p>
+                <b>Payment Status:</b>
+                ${order.paymentStatus}
+            </p>
 
-
-            <p><b>Amount:</b> Rs. ${order.amount}</p>
-
-
-            <p><b>Status:</b> ${order.status}</p>
-
-
-            <button 
-                id="pay-${order.id}" 
-                onclick="pay(${order.id}, ${order.amount})">
-
-                Pay Rs. ${order.amount}
-
-            </button>
-
+            ${
+            order.paymentStatus === "paid"
+            || order.paymentStatus === "PAID"
+                ? `
+                    <p style="color:green;">
+                        <b>Payment Completed ✓</b>
+                    </p>
+                  `
+                : `
+                    <button onclick="payOrder(${order.id})">
+                        Pay
+                    </button>
+                  `
+        }
 
         </div>
 
         `;
 
-
     });
 
-
     document.getElementById("orders").innerHTML = html;
-
 }
 
+async function payOrder(orderId) {
 
+    const response = await fetch(
+        `${BASE_URL}/orders/${orderId}/pay`,
+        {
+            method: "PUT",
+            headers: {
+                "Authorization": token
+            }
+        }
+    );
 
+    if (response.ok) {
 
+        alert("Payment successful!");
 
-function pay(orderId, amount) {
+        loadOrders();
 
+    } else {
 
-    fetch(BASE_URL + "/orders/" + orderId + "/pay", {
+        alert("Payment failed!");
 
-        method: "PUT"
-
-    })
-
-
-        .then(response => response.json())
-
-
-        .then(data => {
-
-
-            alert(
-                "Order Placed Successfully!\n\nPayment Successful ✓\nAmount Paid: Rs. "
-                + amount
-            );
-
-
-            // Remove order from My Orders screen
-            document.getElementById("order-" + orderId).remove();
-
-
-        })
-
-
-        .catch(error => {
-
-
-            alert("Payment Failed");
-
-
-            console.log(error);
-
-
-        });
-
-
+    }
 }

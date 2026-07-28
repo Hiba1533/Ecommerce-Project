@@ -29,33 +29,37 @@ async function register() {
 // Login
 async function login() {
 
-    const user = {
-        email: document.getElementById("email").value,
-        password: document.getElementById("password").value
-    };
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
 
     const response = await fetch(BASE_URL + "/auth/login", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
         },
-        body: JSON.stringify(user)
+        credentials: "include",
+        body: JSON.stringify({
+            email,
+            password
+        })
     });
 
     if (response.ok) {
 
-        // Get JWT token from response header
         const token = response.headers.get("Authorization");
+        const userId = response.headers.get("User-Id");
 
-        if (token) {
-            localStorage.setItem("token", token);
-        }
+        localStorage.setItem("token", token);
+        localStorage.setItem("userId", userId);
 
-        alert("Login Successful");
+        const message = await response.text();
+        alert(message);
 
         window.location.href = "products.html";
 
     } else {
-        alert("Invalid Email or Password");
+
+        const error = await response.text();
+        alert(error);
     }
 }

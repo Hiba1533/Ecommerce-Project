@@ -1,11 +1,26 @@
 const BASE_URL = "http://localhost:8080";
-const userId = 1; // Change later after login
 
-window.onload = loadProducts;
+const userId = localStorage.getItem("userId");
+
+window.onload = function () {
+
+    if (!userId) {
+        alert("Please login first");
+        window.location.href = "index.html";
+        return;
+    }
+
+    loadProducts();
+};
 
 async function loadProducts() {
 
     const response = await fetch(BASE_URL + "/product");
+
+    if (!response.ok) {
+        alert("Unable to load products");
+        return;
+    }
 
     const products = await response.json();
 
@@ -14,35 +29,33 @@ async function loadProducts() {
     products.forEach(product => {
 
         html += `
-<div class="card">
+        <div class="card">
 
-    <img
-        src="${BASE_URL}/product/image/${product.id}"
-        alt="${product.name}"
-        class="product-image">
+            <h2>${product.name}</h2>
 
-    <h2>${product.name}</h2>
+            <p>${product.description}</p>
 
-    <p>${product.description}</p>
+            <p><b>Price:</b> Rs. ${product.price}</p>
 
-    <p><b>Price:</b> Rs. ${product.price}</p>
+            <p><b>Stock:</b> ${product.stock}</p>
 
-    <p><b>Stock:</b> ${product.stock}</p>
+            <p><b>Category:</b> ${product.category.name}</p>
 
-    <p><b>Category:</b> ${product.category.name}</p>
+            <input
+                type="number"
+                id="qty${product.id}"
+                value="1"
+                min="1">
 
-    <input
-        type="number"
-        id="qty${product.id}"
-        value="1"
-        min="1">
+            <br><br>
 
-    <button onclick="addToCart(${product.id})">
-        Add To Cart
-    </button>
+            <button onclick="addToCart(${product.id})">
+                Add To Cart
+            </button>
 
-</div>
-`;    });
+        </div>
+        `;
+    });
 
     document.getElementById("products").innerHTML = html;
 }
@@ -51,16 +64,21 @@ async function addToCart(productId) {
 
     const quantity = document.getElementById("qty" + productId).value;
 
+    const token = localStorage.getItem("token");
+
     const response = await fetch(
         `${BASE_URL}/cart/items?userId=${userId}&productId=${productId}&quantity=${quantity}`,
         {
-            method: "POST"
+            method: "POST",
+            headers: {
+                "Authorization": token
+            }
         }
     );
 
     if (response.ok) {
         alert("Product Added Successfully");
     } else {
-        alert("Failed to Add Product");
+        alert(await response.text());
     }
 }

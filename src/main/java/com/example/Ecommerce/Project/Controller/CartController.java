@@ -15,26 +15,22 @@ public class CartController {
     private final CartService cartService;
     private final UserRepository userRepository;
 
-    public CartController(CartService cartService, UserRepository userRepository) {
+    public CartController(CartService cartService,
+                          UserRepository userRepository) {
         this.cartService = cartService;
         this.userRepository = userRepository;
     }
 
-
     @GetMapping("/{userId}")
-    public Cart getCart(@PathVariable Long userId){
-        Users user=userRepository.findById(userId).orElseThrow(()-> new RuntimeException("no user found"));
+    public Cart getCart(@PathVariable Long userId) {
+        Users user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
         return cartService.getOrCreateCart(user);
     }
 
     @GetMapping("/total/{userId}")
     public BigDecimal getCartTotal(@PathVariable Long userId) {
-
-        Users user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
+        Users user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
         Cart cart = cartService.getOrCreateCart(user);
-
         return cartService.getCartTotal(cart);
     }
 
@@ -45,6 +41,4 @@ public class CartController {
         cartService.clearCart(cart);
         return "Cart cleared";
     }
-
-
 }

@@ -56,39 +56,26 @@ async function addCategory() {
 
 async function addProduct() {
 
-    const name = document.getElementById("name").value;
-    const description = document.getElementById("description").value;
-    const price = document.getElementById("price").value;
-    const stock = document.getElementById("stock").value;
-    const categoryId = document.getElementById("category").value;
-
-    const imageFile = document.getElementById("imageFile").files[0];
-
     const product = {
-        name: name,
-        description: description,
-        price: price,
-        stock: stock,
+        name: document.getElementById("name").value,
+        description: document.getElementById("description").value,
+        price: document.getElementById("price").value,
+        stock: document.getElementById("stock").value,
         category: {
-            id: categoryId
+            id: document.getElementById("category").value
         }
     };
 
-    const formData = new FormData();
-
-    formData.append(
-        "product",
-        new Blob(
-            [JSON.stringify(product)],
-            { type: "application/json" }
-        )
-    );
-
-    formData.append("imageFile", imageFile);
-
     const response = await fetch(BASE_URL + "/product", {
+
         method: "POST",
-        body: formData
+
+        headers: {
+            "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify(product)
+
     });
 
     if (response.ok) {
@@ -99,12 +86,10 @@ async function addProduct() {
         document.getElementById("description").value = "";
         document.getElementById("price").value = "";
         document.getElementById("stock").value = "";
-        document.getElementById("imageFile").value = "";
 
     } else {
 
         const error = await response.text();
         alert(error);
-
     }
 }

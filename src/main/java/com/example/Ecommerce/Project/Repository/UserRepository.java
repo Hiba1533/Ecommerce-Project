@@ -3,8 +3,11 @@ package com.example.Ecommerce.Project.Repository;
 import com.example.Ecommerce.Project.Entity.Users;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.Optional;
+
 public interface UserRepository extends JpaRepository<Users, Long> {
 
-     Boolean existsByEmail(String email);
-     Users findByEmail(String email);
+     Optional<Users> findByEmail(String email);
+
+     boolean existsByEmail(String email);
 }

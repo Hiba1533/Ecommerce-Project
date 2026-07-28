@@ -41,13 +41,13 @@ public class SecurityConfig {
 
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/auth/register",
-                                "/auth/login",
-                                "/cart/**",
+                                "/auth/register/**",
+                                "/auth/login/**",
                                 "/orders/**",
                                 "/product/**",
                                 "/payment/**",
                                 "/category/**",
+                                "/cart/**",
                                 "/cart/items/**"
                         ).permitAll()
 
@@ -68,6 +68,7 @@ public class SecurityConfig {
         configuration.setAllowedOrigins(List.of("http://localhost:63342"));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
+        configuration.setExposedHeaders(List.of("Authorization", "User-Id"));
         configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source =

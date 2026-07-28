@@ -14,19 +14,21 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtService jwtService){
-        this.userRepository=userRepository;
-        this.passwordEncoder=passwordEncoder;
-        this.jwtService=jwtService;
+    public UserService(UserRepository userRepository,
+                       PasswordEncoder passwordEncoder,
+                       JwtService jwtService) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtService = jwtService;
     }
 
-    public Users register(Users user){
+    public Users register(Users user) {
 
         if (userRepository.existsByEmail(user.getEmail())) {
-            throw new RuntimeException("user already exist");
+            throw new RuntimeException("User already exists");
         }
 
-        Users newUser=new Users();
+        Users newUser = new Users();
         newUser.setUsername(user.getUsername());
         newUser.setEmail(user.getEmail());
         newUser.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -34,21 +36,23 @@ public class UserService {
         newUser.setCreatedAt(LocalDateTime.now());
 
         return userRepository.save(newUser);
-
     }
 
-    public String login(Users user){
-        Users existingUser = userRepository.findByEmail(user.getEmail());
+    public String login(Users user) {
 
+        Users existingUser = userRepository.findByEmail(user.getEmail())
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
-        if(existingUser==null){
-            throw new RuntimeException("user not found");
+        if (!passwordEncoder.matches(user.getPassword(), existingUser.getPassword())) {
+            throw new RuntimeException("Incorrect password");
         }
 
-        if(!passwordEncoder.matches(user.getPassword(), existingUser.getPassword())){
-            throw new RuntimeException("incorrect pass");
-        }
         return jwtService.generateToken(existingUser.getEmail());
     }
 
+    public Users getUserByEmail(String email) {
+
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+    }
 }

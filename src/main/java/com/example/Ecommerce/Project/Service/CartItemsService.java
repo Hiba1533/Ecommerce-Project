@@ -12,69 +12,57 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class CartItemsService {
+
     private final CartItemsRepository cartItemsRepository;
     private final CartRepository cartRepository;
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
+    private final CartService cartService;
 
-    public CartItemsService(CartItemsRepository cartItemsRepository, CartRepository cartRepository,
-                            ProductRepository productRepository,
-                            UserRepository userRepository) {
+    public CartItemsService(CartItemsRepository cartItemsRepository, CartRepository cartRepository, ProductRepository productRepository,
+                            UserRepository userRepository, CartService cartService) {
 
         this.cartItemsRepository = cartItemsRepository;
         this.cartRepository = cartRepository;
         this.productRepository = productRepository;
         this.userRepository = userRepository;
+        this.cartService = cartService;
     }
 
     public CartItems addToCart(Long userId, Long productId, Integer quantity) {
-        Users user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-        Optional<Cart> optionalCart = cartRepository.findByUser(user);
-        Cart cart;
-
-        if (optionalCart.isPresent()) {
-            cart = optionalCart.get();
-        } else {
-            cart = new Cart();
-            cart.setUser(user);
-            cart.setCreatedAt(LocalDateTime.now());
-            cart = cartRepository.save(cart);
-        }
-
+        Users user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+        Cart cart = cartService.getOrCreateCart(user);
         Product product = productRepository.findById(productId).orElseThrow(() -> new RuntimeException("Product not found"));
 
-        CartItems cartItem = new CartItems();
-        cartItem.setCart(cart);
-        cartItem.setProduct(product);
-        cartItem.setQuantity(quantity);
-        cartItem.setAddAt(LocalDateTime.now());
-        return cartItemsRepository.save(cartItem);
+        CartItems item = new CartItems();
+        item.setCart(cart);
+        item.setProduct(product);
+        item.setQuantity(quantity);
+        item.setAddAt(LocalDateTime.now());
+
+        return cartItemsRepository.save(item);
     }
 
     public List<CartItems> getCartItems(Long userId) {
 
-        Users user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-        Cart cart=cartRepository.findByUser(user).orElseThrow(()->new RuntimeException("user nto found"));
+        Users user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+        Cart cart = cartService.getOrCreateCart(user);
         return cartItemsRepository.findByCart(cart);
     }
 
-    public CartItems updateQuantity(Long id, Integer quantity){
-        CartItems cartItems=cartItemsRepository.findById(id).orElseThrow(()->new RuntimeException("items not found"));
-        cartItems.setQuantity(quantity);
-        return cartItemsRepository.save(cartItems);
+    public CartItems updateQuantity(Long cartItemId, Integer quantity) {
+        CartItems item = cartItemsRepository.findById(cartItemId).orElseThrow(() -> new RuntimeException("Cart item not found"));
+        item.setQuantity(quantity);
+
+        return cartItemsRepository.save(item);
     }
 
-    public void deleteCartItem(Long id) {
-        CartItems cartItem = cartItemsRepository.findById(id).orElseThrow(() -> new RuntimeException("items not found"));
-        cartItemsRepository.delete(cartItem);
+    public void deleteCartItem(Long cartItemId) {
+        CartItems item = cartItemsRepository.findById(cartItemId).orElseThrow(() -> new RuntimeException("Cart item not found"));
+
+        cartItemsRepository.delete(item);
     }
-
-
-
 }

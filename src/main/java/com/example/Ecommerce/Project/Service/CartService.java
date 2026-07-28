@@ -13,52 +13,36 @@ import java.time.LocalDateTime;
 public class CartService {
 
     private final CartRepository cartRepository;
-
     public CartService(CartRepository cartRepository) {
         this.cartRepository = cartRepository;
     }
 
-    // Get cart of a user
-    public Cart getCartByUser(Users user) {
-        return cartRepository.findByUser(user)
-                .orElse(null);
-    }
-
-    // Create cart if it doesn't exist
-    public Cart createCart(Users user) {
-        Cart cart = new Cart();
-        cart.setUser(user);
-        cart.setCreatedAt(LocalDateTime.now());
-        return cartRepository.save(cart);
-    }
-
-    // Get existing cart or create a new one
     public Cart getOrCreateCart(Users user) {
-        Cart cart = getCartByUser(user);
-        if (cart == null) {
-            cart = createCart(user);
-        }
-        return cart;
+
+        return cartRepository.findByUser(user)
+                .orElseGet(() -> {
+                    Cart cart = new Cart();
+                    cart.setUser(user);
+                    cart.setCreatedAt(LocalDateTime.now());
+
+                    return cartRepository.save(cart);
+                });
     }
 
     public BigDecimal getCartTotal(Cart cart) {
+        BigDecimal total = BigDecimal.ZERO;
+        if (cart.getCartItems() != null) {
+            for (CartItems item : cart.getCartItems()) {
+                BigDecimal itemTotal =
+                        item.getProduct()
+                                .getPrice()
+                                .multiply(BigDecimal.valueOf(item.getQuantity()));
 
-        BigDecimal totalAmount = BigDecimal.ZERO;
-
-        for (CartItems item : cart.getCartItems()) {
-
-            BigDecimal productPrice = item.getProduct().getPrice();
-
-            BigDecimal quantity = BigDecimal.valueOf(item.getQuantity());
-
-            totalAmount = totalAmount.add(productPrice.multiply(quantity));
-
+                total = total.add(itemTotal);
+            }
         }
-
-        return totalAmount;
+        return total;
     }
-
-    // Remove all items from cart
     public void clearCart(Cart cart) {
         cart.getCartItems().clear();
         cartRepository.save(cart);
