@@ -3,6 +3,7 @@ package com.example.Ecommerce.Project.Config;
 import com.example.Ecommerce.Project.Service.JwtFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -45,11 +46,25 @@ public class SecurityConfig {
                                 "/auth/login",
                                 "/cart/**",
                                 "/orders/**",
-                                "/product/**",
                                 "/payment/**",
+<<<<<<< Updated upstream
                                 "/category/**",
+=======
+                                "/cart/**",
+>>>>>>> Stashed changes
                                 "/cart/items/**"
                         ).permitAll()
+
+                        .requestMatchers(HttpMethod.GET,
+                                "/product/**",
+                                "/category/**"
+                        ).permitAll()
+
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+
+                        .requestMatchers(HttpMethod.POST, "/product/**", "/category/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/product/**", "/category/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/product/**", "/category/**").hasRole("ADMIN")
 
                         .anyRequest().authenticated()
                 )
@@ -65,7 +80,11 @@ public class SecurityConfig {
 
         CorsConfiguration configuration = new CorsConfiguration();
 
+<<<<<<< Updated upstream
         configuration.setAllowedOrigins(List.of("http://localhost:5500"));
+=======
+        configuration.setAllowedOrigins(List.of("http://localhost:63342"));
+>>>>>>> Stashed changes
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
@@ -77,5 +96,4 @@ public class SecurityConfig {
 
         return source;
     }
-
 }
