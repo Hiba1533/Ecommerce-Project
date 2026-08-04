@@ -41,30 +41,35 @@ public class SecurityConfig {
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
                 .authorizeHttpRequests(auth -> auth
+
                         .requestMatchers(
                                 "/auth/register",
                                 "/auth/login",
                                 "/cart/**",
                                 "/orders/**",
                                 "/payment/**",
-<<<<<<< Updated upstream
-                                "/category/**",
-=======
-                                "/cart/**",
->>>>>>> Stashed changes
                                 "/cart/items/**"
                         ).permitAll()
 
-                        .requestMatchers(HttpMethod.GET,
+                        .requestMatchers(
+                                HttpMethod.GET,
                                 "/product/**",
                                 "/category/**"
                         ).permitAll()
 
                         .requestMatchers("/admin/**").hasRole("ADMIN")
 
-                        .requestMatchers(HttpMethod.POST, "/product/**", "/category/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/product/**", "/category/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/product/**", "/category/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST,
+                                "/product/**",
+                                "/category/**").hasRole("ADMIN")
+
+                        .requestMatchers(HttpMethod.PUT,
+                                "/product/**",
+                                "/category/**").hasRole("ADMIN")
+
+                        .requestMatchers(HttpMethod.DELETE,
+                                "/product/**",
+                                "/category/**").hasRole("ADMIN")
 
                         .anyRequest().authenticated()
                 )
@@ -80,11 +85,7 @@ public class SecurityConfig {
 
         CorsConfiguration configuration = new CorsConfiguration();
 
-<<<<<<< Updated upstream
-        configuration.setAllowedOrigins(List.of("http://localhost:5500"));
-=======
-        configuration.setAllowedOrigins(List.of("http://localhost:63342"));
->>>>>>> Stashed changes
+        configuration.setAllowedOrigins(List.of("http://localhost:5173"));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
