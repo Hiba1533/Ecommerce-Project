@@ -32,4 +32,13 @@ public class PaymentService {
     public Payment getPayment(Long id) {
         return paymentRepository.findById(id).orElseThrow(()->new RuntimeException("payment not found"));
     }
+
+    public void markPaymentAsRefunded(Long orderId) {
+        Payment payment = paymentRepository.findByOrder_Id(orderId);
+
+        if (payment != null) {
+            payment.setStatus("refunded");
+            paymentRepository.save(payment);
+        }
+    }
 }

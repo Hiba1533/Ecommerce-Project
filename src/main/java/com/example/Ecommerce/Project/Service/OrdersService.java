@@ -16,13 +16,15 @@ public class OrdersService {
     private final UserRepository userRepository;
     private final CartService cartService;
     private final OrderRepository orderRepository;
+    private final PaymentService paymentService;
 
     public OrdersService(OrderRepository ordersRepository,
-                         UserRepository userRepository, CartService cartService, OrderRepository orderRepository) {
+                         UserRepository userRepository, CartService cartService, OrderRepository orderRepository, PaymentService paymentService) {
         this.ordersRepository = ordersRepository;
         this.userRepository = userRepository;
         this.cartService = cartService;
         this.orderRepository = orderRepository;
+        this.paymentService = paymentService;
     }
 
     public Orders placeOrder(Long userId, Orders order) {
@@ -75,4 +77,37 @@ public class OrdersService {
 
         return orderRepository.findByUserId(userId);
     }
+
+    public List<Orders> getAllOrders() {
+        return ordersRepository.findAll();
+    }
+
+    public Orders requestRefund(Long orderId) {
+        Orders order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Order not found"));
+
+        if (order.getPaymentStatus() != PaymentStatus.paid) {
+            throw new RuntimeException("Refund can only be requested for paid orders");
+        }
+
+        order.setPaymentStatus(PaymentStatus.refund_requested);
+        return orderRepository.save(order);
+    }
+
+    public Orders refundOrder(Long orderId) {
+        Orders order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Order not found"));
+
+        if (order.getPaymentStatus() != PaymentStatus.refund_requested) {
+            throw new RuntimeException("Refund was not requested for this order");
+        }
+
+        order.setPaymentStatus(PaymentStatus.refunded);
+        Orders updatedOrder = orderRepository.save(order);
+
+        paymentService.markPaymentAsRefunded(orderId);
+
+        return updatedOrder;
+    }
+
 }

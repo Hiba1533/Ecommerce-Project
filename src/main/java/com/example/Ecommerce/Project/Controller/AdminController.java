@@ -1,5 +1,6 @@
 package com.example.Ecommerce.Project.Controller;
 
+import com.example.Ecommerce.Project.Entity.Orders;
 import com.example.Ecommerce.Project.Entity.Role;
 import com.example.Ecommerce.Project.Entity.Users;
 import com.example.Ecommerce.Project.Service.OrdersService;
@@ -34,5 +35,15 @@ public class AdminController {
     @PutMapping("/users/{id}/role")
     public Users updateUserRole(@PathVariable Long id, @RequestParam Role role) {
         return userService.updateUserRole(id, role);
+    }
+
+    @GetMapping("/orders")
+    public List<Orders> getAllOrders() {
+        return ordersService.getAllOrders();
+    }
+
+    @PutMapping("/orders/{id}/refund")
+    public Orders refundOrder(@PathVariable Long id) {
+        return ordersService.refundOrder(id);
     }
 }

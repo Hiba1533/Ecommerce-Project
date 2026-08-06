@@ -37,10 +37,14 @@ public class OrdersController {
     }
 
     @PutMapping("/{id}/pay")
-    public ResponseEntity<?> payOrder(
-            @PathVariable Long id
-    ){
+    public ResponseEntity<?> payOrder(@PathVariable Long id){
         Orders orders = ordersService.payOrder(id);
+        return ResponseEntity.ok(orders);
+    }
+
+    @PutMapping("/{id}/request-refund")
+    public ResponseEntity<?> requestRefund(@PathVariable Long id) {
+        Orders orders = ordersService.requestRefund(id);
         return ResponseEntity.ok(orders);
     }
 
