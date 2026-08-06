@@ -66,4 +66,13 @@ public class OrdersService {
     public Orders getOrderById(Long id) {
         return ordersRepository.findById(id).orElseThrow(() -> new RuntimeException("Order not found"));
     }
+
+    public List<Orders> getOrdersByUser(Long userId) {
+
+        if (!userRepository.existsById(userId)) {
+            throw new RuntimeException("User not found");
+        }
+
+        return orderRepository.findByUserId(userId);
+    }
 }

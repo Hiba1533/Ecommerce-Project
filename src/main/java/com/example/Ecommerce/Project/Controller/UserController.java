@@ -2,11 +2,10 @@ package com.example.Ecommerce.Project.Controller;
 
 import com.example.Ecommerce.Project.Entity.Users;
 import com.example.Ecommerce.Project.Service.UserService;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
@@ -28,9 +27,38 @@ public class UserController {
                         HttpServletResponse response) {
 
         String token = userService.login(user);
-        response.setHeader("Authorization", "Bearer " +token);
+
+        Cookie cookie = new Cookie("jwt", token);
+        cookie.setHttpOnly(true);
+        cookie.setPath("/");
+        cookie.setMaxAge(24 * 60 * 60);
+
+        response.addCookie(cookie);
 
         return "Login success";
+    }
+
+    @GetMapping("/me")
+    public Users getCurrentUser(Authentication authentication) {
+
+        if (authentication == null) {
+            throw new RuntimeException("User not logged in");
+        }
+
+        return userService.getUserByEmail(authentication.getName());
+    }
+
+    @PostMapping("/logout")
+    public String logout(HttpServletResponse response) {
+
+        Cookie cookie = new Cookie("jwt", "");
+        cookie.setHttpOnly(true);
+        cookie.setPath("/");
+        cookie.setMaxAge(0);
+
+        response.addCookie(cookie);
+
+        return "Logout successful";
     }
 
 }

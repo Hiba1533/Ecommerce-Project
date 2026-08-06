@@ -2,6 +2,7 @@ package com.example.Ecommerce.Project.Controller;
 
 import com.example.Ecommerce.Project.Entity.Role;
 import com.example.Ecommerce.Project.Entity.Users;
+import com.example.Ecommerce.Project.Service.OrdersService;
 import com.example.Ecommerce.Project.Service.UserService;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,9 +13,11 @@ import java.util.List;
 public class AdminController {
 
     private final UserService userService;
+    private final OrdersService ordersService;
 
-    public AdminController(UserService userService) {
+    public AdminController(UserService userService, OrdersService ordersService) {
         this.userService = userService;
+        this.ordersService = ordersService;
     }
 
     @GetMapping("/users")
