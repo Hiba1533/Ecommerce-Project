@@ -42,19 +42,13 @@ public class CartService {
     }
 
     public BigDecimal getCartTotal(Cart cart) {
-
         BigDecimal totalAmount = BigDecimal.ZERO;
-
         for (CartItems item : cart.getCartItems()) {
-
             BigDecimal productPrice = item.getProduct().getPrice();
-
             BigDecimal quantity = BigDecimal.valueOf(item.getQuantity());
-
             totalAmount = totalAmount.add(productPrice.multiply(quantity));
 
         }
-
         return totalAmount;
     }
 

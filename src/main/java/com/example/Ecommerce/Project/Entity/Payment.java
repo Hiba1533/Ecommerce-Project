@@ -25,8 +25,8 @@ public class Payment {
 
     private LocalDateTime paidAt;
 
-    @Column(nullable = false)
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private PaymentStatus status;
 
     @OneToOne
     @JoinColumn(name="order_id", nullable = false)

@@ -2,6 +2,7 @@ package com.example.Ecommerce.Project.Service;
 
 import com.example.Ecommerce.Project.Entity.Orders;
 import com.example.Ecommerce.Project.Entity.Payment;
+import com.example.Ecommerce.Project.Entity.PaymentStatus;
 import com.example.Ecommerce.Project.Repository.OrderRepository;
 import com.example.Ecommerce.Project.Repository.PaymentRepository;
 import org.springframework.stereotype.Service;
@@ -24,7 +25,7 @@ public class PaymentService {
         Payment payment=new Payment();
         payment.setOrder(order);
         payment.setAmount(order.getAmount());
-        payment.setStatus("placed");
+        payment.setStatus(PaymentStatus.unpaid);
         payment.setPaidAt(LocalDateTime.now());
         return paymentRepository.save(payment);
     }
@@ -37,7 +38,7 @@ public class PaymentService {
         Payment payment = paymentRepository.findByOrder_Id(orderId);
 
         if (payment != null) {
-            payment.setStatus("refunded");
+            payment.setStatus(PaymentStatus.refunded);
             paymentRepository.save(payment);
         }
     }
