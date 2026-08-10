@@ -25,11 +25,9 @@ public class JwtFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response,
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                     FilterChain filterChain)
             throws ServletException, IOException {
-
         String token = null;
 
         // 1. Check Authorization header
@@ -70,16 +68,13 @@ public class JwtFilter extends OncePerRequestFilter {
                             null,
                             List.of(new SimpleGrantedAuthority("ROLE_" + role))
                     );
-
             authentication.setDetails(
                     new WebAuthenticationDetailsSource()
                             .buildDetails(request)
             );
-
             SecurityContextHolder.getContext()
                     .setAuthentication(authentication);
         }
-
         filterChain.doFilter(request, response);
     }
 }

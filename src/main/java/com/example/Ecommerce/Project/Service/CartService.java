@@ -19,13 +19,11 @@ public class CartService {
     }
 
     public Cart getOrCreateCart(Users user) {
-
         return cartRepository.findByUser(user)
                 .orElseGet(() -> {
                     Cart cart = new Cart();
                     cart.setUser(user);
                     cart.setCreatedAt(LocalDateTime.now());
-
                     return cartRepository.save(cart);
                 });
     }
@@ -33,19 +31,14 @@ public class CartService {
     public BigDecimal getCartTotal(Cart cart) {
 
         BigDecimal total = BigDecimal.ZERO;
-
         if (cart.getCartItems() != null) {
             for (CartItems item : cart.getCartItems()) {
-
-                BigDecimal itemTotal =
-                        item.getProduct()
+                BigDecimal itemTotal = item.getProduct()
                                 .getPrice()
                                 .multiply(BigDecimal.valueOf(item.getQuantity()));
-
                 total = total.add(itemTotal);
             }
         }
-
         return total;
     }
 

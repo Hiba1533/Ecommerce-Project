@@ -23,10 +23,8 @@ public class PaymentService {
     }
 
     public Payment makePayment(Long orderId) {
-
         Orders order = ordersRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
-
         if (order.getStatus() == OrderStatus.placed) {
             throw new RuntimeException("Order already paid");
         }
@@ -35,12 +33,10 @@ public class PaymentService {
         ordersRepository.save(order);
 
         Payment payment = new Payment();
-
         payment.setOrder(order);
         payment.setAmount(order.getAmount());
         payment.setStatus(PaymentStatus.unpaid);
         payment.setPaidAt(LocalDateTime.now());
-
         return paymentRepository.save(payment);
     }
 
@@ -50,9 +46,7 @@ public class PaymentService {
     }
 
     public void markPaymentAsRefunded(Long orderId) {
-
         Payment payment = paymentRepository.findByOrder_Id(orderId);
-
         if (payment != null) {
             payment.setStatus(PaymentStatus.refunded);
             paymentRepository.save(payment);

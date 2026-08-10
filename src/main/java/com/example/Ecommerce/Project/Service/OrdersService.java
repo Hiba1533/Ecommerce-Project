@@ -17,9 +17,7 @@ public class OrdersService {
     private final CartService cartService;
     private final PaymentService paymentService;
 
-    public OrdersService(OrderRepository orderRepository,
-                         UserRepository userRepository,
-                         CartService cartService,
+    public OrdersService(OrderRepository orderRepository, UserRepository userRepository, CartService cartService,
                          PaymentService paymentService) {
         this.orderRepository = orderRepository;
         this.userRepository = userRepository;
@@ -28,51 +26,37 @@ public class OrdersService {
     }
 
     public Orders placeOrder(Long userId, Orders order) {
-
         // Find user
         Users user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-
         Orders newOrder = new Orders();
-
         // Copy information
         newOrder.setUser(user);
         newOrder.setName(order.getName());
         newOrder.setPhone(order.getPhone());
         newOrder.setAddress(order.getAddress());
-
         // Get user cart
         Cart cart = cartService.getOrCreateCart(user);
-
         // Calculate total
         BigDecimal totalAmount = BigDecimal.ZERO;
-
         // Loop through cart for products
         for (CartItems item : cart.getCartItems()) {
-
             // Get product price
             BigDecimal productPrice = item.getProduct().getPrice();
-
             // Get quantity
-            BigDecimal quantity =
-                    BigDecimal.valueOf(item.getQuantity());
-
+            BigDecimal quantity = BigDecimal.valueOf(item.getQuantity());
             totalAmount = totalAmount.add(
                     productPrice.multiply(quantity)
             );
         }
 
         newOrder.setAmount(totalAmount);
-
         // When order is created, its status is pending
         newOrder.setStatus(OrderStatus.pending);
         newOrder.setOrderDate(LocalDateTime.now());
-
         Orders savedOrder = orderRepository.save(newOrder);
-
         // Clear cart
         cartService.clearCart(cart);
-
         return savedOrder;
     }
 
@@ -80,9 +64,7 @@ public class OrdersService {
 
         Orders orders = orderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
-
         orders.setPaymentStatus(PaymentStatus.paid);
-
         return orderRepository.save(orders);
     }
 
@@ -92,11 +74,9 @@ public class OrdersService {
     }
 
     public List<Orders> getOrdersByUser(Long userId) {
-
         if (!userRepository.existsById(userId)) {
             throw new RuntimeException("User not found");
         }
-
         return orderRepository.findByUserId(userId);
     }
 
@@ -105,26 +85,20 @@ public class OrdersService {
     }
 
     public Orders requestRefund(Long orderId) {
-
         Orders order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
-
         if (order.getPaymentStatus() != PaymentStatus.paid) {
             throw new RuntimeException(
                     "Refund can only be requested for paid orders"
             );
         }
-
         order.setPaymentStatus(PaymentStatus.refund_requested);
-
         return orderRepository.save(order);
     }
 
     public Orders refundOrder(Long orderId) {
-
         Orders order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
-
         // Check for refund request
         if (order.getPaymentStatus() != PaymentStatus.refund_requested) {
             throw new RuntimeException(
@@ -133,12 +107,9 @@ public class OrdersService {
         }
 
         order.setPaymentStatus(PaymentStatus.refunded);
-
         Orders updatedOrder = orderRepository.save(order);
-
         // Update payment status for that order
         paymentService.markPaymentAsRefunded(orderId);
-
         return updatedOrder;
     }
 }
