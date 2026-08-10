@@ -35,7 +35,11 @@ public class PaymentService {
         Payment payment = new Payment();
         payment.setOrder(order);
         payment.setAmount(order.getAmount());
+<<<<<<< HEAD
         payment.setStatus(PaymentStatus.paid);
+=======
+        payment.setStatus(PaymentStatus.unpaid);
+>>>>>>> phase-2
         payment.setPaidAt(LocalDateTime.now());
 
         return paymentRepository.save(payment);
@@ -43,5 +47,14 @@ public class PaymentService {
 
     public Payment getPayment(Long id) {
         return paymentRepository.findById(id).orElseThrow(() -> new RuntimeException("Payment not found"));
+    }
+
+    public void markPaymentAsRefunded(Long orderId) {
+        Payment payment = paymentRepository.findByOrder_Id(orderId);
+
+        if (payment != null) {
+            payment.setStatus(PaymentStatus.refunded);
+            paymentRepository.save(payment);
+        }
     }
 }

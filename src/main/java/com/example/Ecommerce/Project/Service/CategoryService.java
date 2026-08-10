@@ -1,7 +1,6 @@
 package com.example.Ecommerce.Project.Service;
 
 import com.example.Ecommerce.Project.Entity.Category;
-import com.example.Ecommerce.Project.Entity.Product;
 import com.example.Ecommerce.Project.Repository.CategoryRepository;
 import org.springframework.stereotype.Service;
 

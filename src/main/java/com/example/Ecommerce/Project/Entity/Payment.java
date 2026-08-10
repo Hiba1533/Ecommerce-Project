@@ -26,7 +26,10 @@ public class Payment {
     private LocalDateTime paidAt;
 
     @Enumerated(EnumType.STRING)
+<<<<<<< HEAD
     @Column(nullable =false)
+=======
+>>>>>>> phase-2
     private PaymentStatus status;
 
     @OneToOne

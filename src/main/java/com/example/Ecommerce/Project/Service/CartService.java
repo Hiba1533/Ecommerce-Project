@@ -30,6 +30,7 @@ public class CartService {
     }
 
     public BigDecimal getCartTotal(Cart cart) {
+<<<<<<< HEAD
         BigDecimal total = BigDecimal.ZERO;
         if (cart.getCartItems() != null) {
             for (CartItems item : cart.getCartItems()) {
@@ -42,6 +43,16 @@ public class CartService {
             }
         }
         return total;
+=======
+        BigDecimal totalAmount = BigDecimal.ZERO;
+        for (CartItems item : cart.getCartItems()) {
+            BigDecimal productPrice = item.getProduct().getPrice();
+            BigDecimal quantity = BigDecimal.valueOf(item.getQuantity());
+            totalAmount = totalAmount.add(productPrice.multiply(quantity));
+
+        }
+        return totalAmount;
+>>>>>>> phase-2
     }
     public void clearCart(Cart cart) {
         cart.getCartItems().clear();

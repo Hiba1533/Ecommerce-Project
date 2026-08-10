@@ -24,7 +24,11 @@ public class OrdersController {
 
     @GetMapping("/{userId}")
     public List<Orders> getOrders(@PathVariable Long userId) {
+<<<<<<< HEAD
         return ordersService.getOrders(userId);
+=======
+        return ordersService.getOrdersByUser(userId);
+>>>>>>> phase-2
     }
 
     @GetMapping("/details/{id}")
@@ -35,6 +39,12 @@ public class OrdersController {
     @PutMapping("/{id}/pay")
     public ResponseEntity<?> payOrder(@PathVariable Long id){
         Orders orders = ordersService.payOrder(id);
+        return ResponseEntity.ok(orders);
+    }
+
+    @PutMapping("/{id}/request-refund")
+    public ResponseEntity<?> requestRefund(@PathVariable Long id) {
+        Orders orders = ordersService.requestRefund(id);
         return ResponseEntity.ok(orders);
     }
 

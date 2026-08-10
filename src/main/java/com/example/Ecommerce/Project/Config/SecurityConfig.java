@@ -3,6 +3,7 @@ package com.example.Ecommerce.Project.Config;
 import com.example.Ecommerce.Project.Service.JwtFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -40,16 +41,39 @@ public class SecurityConfig {
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
                 .authorizeHttpRequests(auth -> auth
+
                         .requestMatchers(
                                 "/auth/register/**",
                                 "/auth/login/**",
                                 "/orders/**",
-                                "/product/**",
                                 "/payment/**",
+<<<<<<< HEAD
                                 "/category/**",
                                 "/cart/**",
+=======
+>>>>>>> phase-2
                                 "/cart/items/**"
                         ).permitAll()
+
+                        .requestMatchers(
+                                HttpMethod.GET,
+                                "/product/**",
+                                "/category/**"
+                        ).permitAll()
+
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+
+                        .requestMatchers(HttpMethod.POST,
+                                "/product/**",
+                                "/category/**").hasRole("ADMIN")
+
+                        .requestMatchers(HttpMethod.PUT,
+                                "/product/**",
+                                "/category/**").hasRole("ADMIN")
+
+                        .requestMatchers(HttpMethod.DELETE,
+                                "/product/**",
+                                "/category/**").hasRole("ADMIN")
 
                         .anyRequest().authenticated()
                 )
@@ -68,7 +92,11 @@ public class SecurityConfig {
         configuration.setAllowedOrigins(List.of("http://localhost:5173"));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
+<<<<<<< HEAD
         configuration.setExposedHeaders(List.of("Authorization", "User-Id"));
+=======
+        configuration.setExposedHeaders(List.of("Authorization"));
+>>>>>>> phase-2
         configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source =
@@ -78,5 +106,4 @@ public class SecurityConfig {
 
         return source;
     }
-
 }
