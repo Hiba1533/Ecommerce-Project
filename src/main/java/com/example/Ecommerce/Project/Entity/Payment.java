@@ -14,8 +14,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Data
 @Builder
-
 public class Payment {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -26,13 +26,9 @@ public class Payment {
     private LocalDateTime paidAt;
 
     @Enumerated(EnumType.STRING)
-<<<<<<< HEAD
-    @Column(nullable =false)
-=======
->>>>>>> phase-2
     private PaymentStatus status;
 
     @OneToOne
-    @JoinColumn(name="order_id", nullable = false)
+    @JoinColumn(name = "order_id", nullable = false)
     private Orders order;
 }

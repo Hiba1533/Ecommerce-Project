@@ -38,48 +38,60 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
 
                 .sessionManagement(session ->
-                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                        session.sessionCreationPolicy(
+                                SessionCreationPolicy.STATELESS
+                        )
+                )
 
                 .authorizeHttpRequests(auth -> auth
 
+                        // Public authentication endpoints
                         .requestMatchers(
                                 "/auth/register/**",
                                 "/auth/login/**",
                                 "/orders/**",
                                 "/payment/**",
-<<<<<<< HEAD
-                                "/category/**",
-                                "/cart/**",
-=======
->>>>>>> phase-2
                                 "/cart/items/**"
                         ).permitAll()
 
+                        // Public GET endpoints
                         .requestMatchers(
                                 HttpMethod.GET,
                                 "/product/**",
                                 "/category/**"
                         ).permitAll()
 
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        // Admin endpoints
+                        .requestMatchers("/admin/**")
+                        .hasRole("ADMIN")
 
-                        .requestMatchers(HttpMethod.POST,
+                        // Admin product/category operations
+                        .requestMatchers(
+                                HttpMethod.POST,
                                 "/product/**",
-                                "/category/**").hasRole("ADMIN")
+                                "/category/**"
+                        ).hasRole("ADMIN")
 
-                        .requestMatchers(HttpMethod.PUT,
+                        .requestMatchers(
+                                HttpMethod.PUT,
                                 "/product/**",
-                                "/category/**").hasRole("ADMIN")
+                                "/category/**"
+                        ).hasRole("ADMIN")
 
-                        .requestMatchers(HttpMethod.DELETE,
+                        .requestMatchers(
+                                HttpMethod.DELETE,
                                 "/product/**",
-                                "/category/**").hasRole("ADMIN")
+                                "/category/**"
+                        ).hasRole("ADMIN")
 
+                        // Everything else requires authentication
                         .anyRequest().authenticated()
                 )
 
-                .addFilterBefore(jwtFilter,
-                        UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(
+                        jwtFilter,
+                        UsernamePasswordAuthenticationFilter.class
+                );
 
         return http.build();
     }
@@ -87,22 +99,41 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
 
-        CorsConfiguration configuration = new CorsConfiguration();
+        CorsConfiguration configuration =
+                new CorsConfiguration();
 
-        configuration.setAllowedOrigins(List.of("http://localhost:5173"));
-        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(List.of("*"));
-<<<<<<< HEAD
-        configuration.setExposedHeaders(List.of("Authorization", "User-Id"));
-=======
-        configuration.setExposedHeaders(List.of("Authorization"));
->>>>>>> phase-2
+        configuration.setAllowedOrigins(
+                List.of("http://localhost:5173")
+        );
+
+        configuration.setAllowedMethods(
+                List.of(
+                        "GET",
+                        "POST",
+                        "PUT",
+                        "DELETE",
+                        "OPTIONS"
+                )
+        );
+
+        configuration.setAllowedHeaders(
+                List.of("*")
+        );
+
+        configuration.setExposedHeaders(
+                List.of("Authorization")
+        );
+
+        // Required when using cookies
         configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source =
                 new UrlBasedCorsConfigurationSource();
 
-        source.registerCorsConfiguration("/**", configuration);
+        source.registerCorsConfiguration(
+                "/**",
+                configuration
+        );
 
         return source;
     }

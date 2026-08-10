@@ -16,14 +16,16 @@ public class PaymentService {
     private final PaymentRepository paymentRepository;
     private final OrderRepository ordersRepository;
 
-    public PaymentService(PaymentRepository paymentRepository, OrderRepository orderRepository) {
+    public PaymentService(PaymentRepository paymentRepository,
+                          OrderRepository orderRepository) {
         this.paymentRepository = paymentRepository;
         this.ordersRepository = orderRepository;
     }
 
     public Payment makePayment(Long orderId) {
 
-        Orders order = ordersRepository.findById(orderId).orElseThrow(() -> new RuntimeException("Order not found"));
+        Orders order = ordersRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Order not found"));
 
         if (order.getStatus() == OrderStatus.placed) {
             throw new RuntimeException("Order already paid");
@@ -33,23 +35,22 @@ public class PaymentService {
         ordersRepository.save(order);
 
         Payment payment = new Payment();
+
         payment.setOrder(order);
         payment.setAmount(order.getAmount());
-<<<<<<< HEAD
-        payment.setStatus(PaymentStatus.paid);
-=======
         payment.setStatus(PaymentStatus.unpaid);
->>>>>>> phase-2
         payment.setPaidAt(LocalDateTime.now());
 
         return paymentRepository.save(payment);
     }
 
     public Payment getPayment(Long id) {
-        return paymentRepository.findById(id).orElseThrow(() -> new RuntimeException("Payment not found"));
+        return paymentRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Payment not found"));
     }
 
     public void markPaymentAsRefunded(Long orderId) {
+
         Payment payment = paymentRepository.findByOrder_Id(orderId);
 
         if (payment != null) {

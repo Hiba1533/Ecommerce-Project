@@ -31,9 +31,12 @@ public class UserService {
         }
 
         Users newUser = new Users();
+
         newUser.setUsername(user.getUsername());
         newUser.setEmail(user.getEmail());
-        newUser.setPassword(passwordEncoder.encode(user.getPassword()));
+        newUser.setPassword(
+                passwordEncoder.encode(user.getPassword())
+        );
         newUser.setPhone(user.getPhone());
         newUser.setRole(Role.USER);
         newUser.setCreatedAt(LocalDateTime.now());
@@ -42,25 +45,14 @@ public class UserService {
     }
 
     public String login(Users user) {
-<<<<<<< HEAD
 
         Users existingUser = userRepository.findByEmail(user.getEmail())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        if (!passwordEncoder.matches(user.getPassword(), existingUser.getPassword())) {
-            throw new RuntimeException("Incorrect password");
-        }
+        if (!passwordEncoder.matches(
+                user.getPassword(),
+                existingUser.getPassword())) {
 
-        return jwtService.generateToken(existingUser.getEmail());
-=======
-
-        Users existingUser = userRepository.findByEmail(user.getEmail());
-
-        if (existingUser == null) {
-            throw new RuntimeException("User not found");
-        }
-
-        if (!passwordEncoder.matches(user.getPassword(), existingUser.getPassword())) {
             throw new RuntimeException("Incorrect password");
         }
 
@@ -68,22 +60,12 @@ public class UserService {
                 existingUser.getEmail(),
                 existingUser.getRole().name()
         );
->>>>>>> phase-2
     }
 
     public Users getUserByEmail(String email) {
 
-<<<<<<< HEAD
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-=======
-        Users user = userRepository.findByEmail(email);
-
-        if (user == null) {
-            throw new RuntimeException("User not found");
-        }
-
-        return user;
     }
 
     public List<Users> getAllUsers() {
@@ -119,14 +101,16 @@ public class UserService {
         }
 
         Users admin = new Users();
+
         admin.setUsername(username);
         admin.setEmail(email);
-        admin.setPassword(passwordEncoder.encode(password));
+        admin.setPassword(
+                passwordEncoder.encode(password)
+        );
         admin.setPhone(phone);
         admin.setRole(Role.ADMIN);
         admin.setCreatedAt(LocalDateTime.now());
 
         userRepository.save(admin);
->>>>>>> phase-2
     }
 }

@@ -31,7 +31,6 @@ public class JwtFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         String token = null;
-<<<<<<< HEAD
 
         // 1. Check Authorization header
         String header = request.getHeader("Authorization");
@@ -40,54 +39,45 @@ public class JwtFilter extends OncePerRequestFilter {
             token = header.substring(7);
         }
 
-        // 2. If no header, check cookie
+        // 2. If no Authorization header, check cookies
         if (token == null && request.getCookies() != null) {
 
             for (Cookie cookie : request.getCookies()) {
 
+                // Support token cookie
                 if ("token".equals(cookie.getName())) {
-=======
+                    token = cookie.getValue();
+                    break;
+                }
 
-        Cookie[] cookies = request.getCookies();
-
-        if (cookies != null) {
-
-            for (Cookie cookie : cookies) {
-
-                if (cookie.getName().equals("jwt")) {
->>>>>>> phase-2
+                // Support jwt cookie
+                if ("jwt".equals(cookie.getName())) {
                     token = cookie.getValue();
                     break;
                 }
             }
         }
 
-<<<<<<< HEAD
         // 3. Validate token
         if (token != null && jwtService.validateToken(token)) {
 
             String email = jwtService.extractUsername(token);
-=======
-        if (token != null && jwtService.validateToken(token)) {
-
-            String email = jwtService.extractUsername(token);
             String role = jwtService.extractRole(token);
->>>>>>> phase-2
 
             UsernamePasswordAuthenticationToken authentication =
                     new UsernamePasswordAuthenticationToken(
                             email,
                             null,
-<<<<<<< HEAD
-                            Collections.emptyList());
-=======
-                            List.of(new SimpleGrantedAuthority("ROLE_" + role)));
->>>>>>> phase-2
+                            List.of(new SimpleGrantedAuthority("ROLE_" + role))
+                    );
 
             authentication.setDetails(
-                    new WebAuthenticationDetailsSource().buildDetails(request));
+                    new WebAuthenticationDetailsSource()
+                            .buildDetails(request)
+            );
 
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+            SecurityContextHolder.getContext()
+                    .setAuthentication(authentication);
         }
 
         filterChain.doFilter(request, response);

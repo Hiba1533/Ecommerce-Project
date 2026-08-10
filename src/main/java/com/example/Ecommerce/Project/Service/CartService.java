@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 public class CartService {
 
     private final CartRepository cartRepository;
+
     public CartService(CartRepository cartRepository) {
         this.cartRepository = cartRepository;
     }
@@ -30,10 +31,12 @@ public class CartService {
     }
 
     public BigDecimal getCartTotal(Cart cart) {
-<<<<<<< HEAD
+
         BigDecimal total = BigDecimal.ZERO;
+
         if (cart.getCartItems() != null) {
             for (CartItems item : cart.getCartItems()) {
+
                 BigDecimal itemTotal =
                         item.getProduct()
                                 .getPrice()
@@ -42,18 +45,10 @@ public class CartService {
                 total = total.add(itemTotal);
             }
         }
-        return total;
-=======
-        BigDecimal totalAmount = BigDecimal.ZERO;
-        for (CartItems item : cart.getCartItems()) {
-            BigDecimal productPrice = item.getProduct().getPrice();
-            BigDecimal quantity = BigDecimal.valueOf(item.getQuantity());
-            totalAmount = totalAmount.add(productPrice.multiply(quantity));
 
-        }
-        return totalAmount;
->>>>>>> phase-2
+        return total;
     }
+
     public void clearCart(Cart cart) {
         cart.getCartItems().clear();
         cartRepository.save(cart);
