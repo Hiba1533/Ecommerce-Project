@@ -46,4 +46,17 @@ public class AdminController {
     public Orders refundOrder(@PathVariable Long id) {
         return ordersService.refundOrder(id);
     }
+
+    @GetMapping("/merchants")
+    public List<Users> getAllMerchants(){
+        return userService.getAllMerchant();
+    }
+
+    @DeleteMapping("/merchants/{id}")
+    public String deleteMerchant(@PathVariable Long id){
+        userService.deleteMerchant(id);
+        return "Merchant Deleted";
+    }
+
+
 }

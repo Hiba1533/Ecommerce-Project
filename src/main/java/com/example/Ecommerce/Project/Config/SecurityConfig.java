@@ -51,7 +51,8 @@ public class SecurityConfig {
                                 "/auth/login/**",
                                 "/orders/**",
                                 "/payment/**",
-                                "/cart/items/**"
+                                "/cart/items/**",
+                                "/merchant/register"
                         ).permitAll()
 
                         // Public GET endpoints
@@ -65,24 +66,24 @@ public class SecurityConfig {
                         .requestMatchers("/admin/**")
                         .hasRole("ADMIN")
 
-                        // Admin product/category operations
+                        .requestMatchers("/merchant/**")
+                        .hasRole("MERCHANT")
+
+                        // merchant product/category operations
                         .requestMatchers(
                                 HttpMethod.POST,
-                                "/product/**",
-                                "/category/**"
-                        ).hasRole("ADMIN")
+                                "/product/**","/category/**"
+                        ).hasRole("MERCHANT")
 
                         .requestMatchers(
                                 HttpMethod.PUT,
-                                "/product/**",
-                                "/category/**"
-                        ).hasRole("ADMIN")
+                                "/product/**","/category/**"
+                        ).hasRole("MERCHANT")
 
                         .requestMatchers(
                                 HttpMethod.DELETE,
-                                "/product/**",
-                                "/category/**"
-                        ).hasRole("ADMIN")
+                                "/product/**","/category/**"
+                        ).hasRole("MERCHANT")
 
                         // Everything else requires authentication
                         .anyRequest().authenticated()

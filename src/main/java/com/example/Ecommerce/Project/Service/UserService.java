@@ -44,6 +44,21 @@ public class UserService {
         return userRepository.save(newUser);
     }
 
+    public Users registerMerchant(Users user){
+       if(userRepository.existsByEmail(user.getEmail())){
+           throw new RuntimeException("already exists");
+       }
+       Users merchant=new Users();
+       merchant.setUsername(user.getUsername());
+       merchant.setEmail(user.getEmail());
+       merchant.setPassword(passwordEncoder.encode(user.getPassword()));
+       merchant.setPhone(user.getPhone());
+       merchant.setRole(Role.MERCHANT);
+       merchant.setCreatedAt(LocalDateTime.now());
+
+       return userRepository.save(merchant);
+    }
+
     public String login(Users user) {
 
         Users existingUser = userRepository.findByEmail(user.getEmail())
@@ -110,7 +125,22 @@ public class UserService {
         admin.setPhone(phone);
         admin.setRole(Role.ADMIN);
         admin.setCreatedAt(LocalDateTime.now());
-
         userRepository.save(admin);
     }
+
+    public List<Users> getAllMerchant() {
+        return userRepository.findByRole(Role.MERCHANT);
+    }
+
+    public void deleteMerchant(Long id) {
+
+        Users merchant = userRepository.findById(id) .orElseThrow(() -> new RuntimeException("Merchant not found"));
+
+        if(merchant.getRole()!=Role.MERCHANT){
+            throw new RuntimeException("user is not a merchant");
+        }
+
+        userRepository.deleteById(id);
+    }
+
 }
