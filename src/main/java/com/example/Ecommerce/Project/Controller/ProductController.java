@@ -2,9 +2,8 @@ package com.example.Ecommerce.Project.Controller;
 
 import com.example.Ecommerce.Project.Entity.Product;
 import com.example.Ecommerce.Project.Service.ProductService;
-import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
@@ -17,13 +16,8 @@ public class ProductController {
         this.productService = productService;
     }
 
-    // Add Product
-    @PostMapping
-    public ResponseEntity<Product> addProduct(@RequestBody Product product) {
-
-        Product savedProduct = productService.addProduct(product);
-
-        return ResponseEntity.ok(savedProduct);
+    @PostMapping public Product addProduct( @RequestBody Product product, Authentication authentication){
+        return productService.addProduct( product, authentication );
     }
 
     @GetMapping
@@ -37,16 +31,13 @@ public class ProductController {
     }
 
     @PutMapping("/{id}")
-    public Product updateProduct(@PathVariable Long id,
-                                 @RequestBody Product product) {
-
-        return productService.updateProduct(id, product);
+    public Product updateProduct(@PathVariable Long id,@RequestBody Product product, Authentication authentication){
+        return productService.updateProduct(id, product, authentication);
     }
 
     @DeleteMapping("/{id}")
-    public String deleteProduct(@PathVariable Long id) {
-
-        productService.deleteProduct(id);
-        return "Product deleted";
+    public String deleteProduct(@PathVariable Long id, Authentication authentication){
+        productService.deleteProduct(id, authentication);
+        return "product deleted";
     }
 }

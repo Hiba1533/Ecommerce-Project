@@ -29,4 +29,8 @@ public class Category {
     @JsonIgnore
     private List<Product> products;
 
+    @ManyToOne
+    @JoinColumn(name="merchant_id")
+    private Users merchant;
+
 }

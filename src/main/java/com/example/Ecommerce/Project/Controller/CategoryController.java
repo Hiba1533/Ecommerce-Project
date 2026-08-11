@@ -2,6 +2,8 @@ package com.example.Ecommerce.Project.Controller;
 
 import com.example.Ecommerce.Project.Entity.Category;
 import com.example.Ecommerce.Project.Service.CategoryService;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,8 +20,8 @@ public class CategoryController {
     }
 
     @PostMapping
-    public Category addCategory(@RequestBody Category category){
-        return categoryService.addCategory(category);
+    public Category addCategory(@RequestBody Category category, Authentication authentication){
+        return categoryService.addCategory(category, authentication);
     }
 
     @GetMapping
@@ -27,14 +29,19 @@ public class CategoryController {
         return categoryService.getCategory();
     }
 
+    @GetMapping("/{id}")
+    public Category getById(@PathVariable Long id){
+        return categoryService.getById(id);
+    }
+
     @PutMapping("/{id}")
-    public Category updateCategory(@PathVariable Long id, @RequestBody Category category){
-        return categoryService.updateCategory(id, category);
+    public Category updateCategory(@PathVariable Long id, @RequestBody Category category, Authentication authentication){
+        return categoryService.updateCategory(id, category, authentication);
     }
 
     @DeleteMapping("/{id}")
-    public String deleteProduct(@PathVariable Long id){
-        categoryService.deletecategory(id);
+    public String deleteProduct(@PathVariable Long id, Authentication authentication){
+        categoryService.deletecategory(id, authentication);
         return "category deleted";
     }
 

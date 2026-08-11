@@ -1,9 +1,11 @@
 package com.example.Ecommerce.Project.Controller;
 
+import com.example.Ecommerce.Project.Entity.Product;
 import com.example.Ecommerce.Project.Entity.Users;
 import com.example.Ecommerce.Project.Service.CategoryService;
 import com.example.Ecommerce.Project.Service.ProductService;
 import com.example.Ecommerce.Project.Service.UserService;
+import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,4 +26,6 @@ public class MerchantController {
     public Users registerMerchant(@RequestBody Users user){
         return userService.registerMerchant(user);
     }
+
+
 }

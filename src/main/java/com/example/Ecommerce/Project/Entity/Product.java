@@ -32,15 +32,11 @@ public class Product {
     @Column(nullable = false)
     private Integer stock;
 
-    //private String imageName;
-    //private String imageType;
-
-    /*
-    @Lob    //large object
-    @JsonIgnore
-    private byte[] imageData;*/
-
     @ManyToOne
     @JoinColumn(name="category_id", nullable = false)
     private Category category;
+
+    @ManyToOne
+    @JoinColumn(name="merchant_id")
+    private Users merchant;
 }
