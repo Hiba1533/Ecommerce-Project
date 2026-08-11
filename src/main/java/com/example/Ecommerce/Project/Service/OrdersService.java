@@ -7,7 +7,9 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import org.springframework.security.core.Authentication;
 
 @Service
 public class OrdersService {
@@ -29,31 +31,42 @@ public class OrdersService {
         // Find user
         Users user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
+        // Create new order
         Orders newOrder = new Orders();
-        // Copy information
         newOrder.setUser(user);
         newOrder.setName(order.getName());
         newOrder.setPhone(order.getPhone());
         newOrder.setAddress(order.getAddress());
-        // Get user cart
+        // Get user's cart
         Cart cart = cartService.getOrCreateCart(user);
-        // Calculate total
+        // Total amount
         BigDecimal totalAmount = BigDecimal.ZERO;
-        // Loop through cart for products
+        // Store order items
+        List<OrderItems> orderItems = new ArrayList<>();
+        // Loop through cart
         for (CartItems item : cart.getCartItems()) {
-            // Get product price
+            // Product price
             BigDecimal productPrice = item.getProduct().getPrice();
-            // Get quantity
+            // Quantity
             BigDecimal quantity = BigDecimal.valueOf(item.getQuantity());
+            // Calculate total
             totalAmount = totalAmount.add(
                     productPrice.multiply(quantity)
             );
+            // Create OrderItem
+            OrderItems orderItem = new OrderItems();
+            orderItem.setOrder(newOrder);
+            orderItem.setProduct(item.getProduct());
+            orderItem.setQuantity(item.getQuantity());
+            orderItems.add(orderItem);
         }
-
+        // Set order information
         newOrder.setAmount(totalAmount);
-        // When order is created, its status is pending
         newOrder.setStatus(OrderStatus.pending);
         newOrder.setOrderDate(LocalDateTime.now());
+        // Attach order items to order
+        newOrder.setOrderItems(orderItems);
+        // Save order
         Orders savedOrder = orderRepository.save(newOrder);
         // Clear cart
         cartService.clearCart(cart);
@@ -111,5 +124,53 @@ public class OrdersService {
         // Update payment status for that order
         paymentService.markPaymentAsRefunded(orderId);
         return updatedOrder;
+    }
+
+    public List<Orders> getMerchantOrders(Authentication authentication) {
+
+        // Find logged-in merchant
+        Users merchant = userRepository.findByEmail(
+                authentication.getName()
+        ).orElseThrow(() ->
+                new RuntimeException("Merchant not found")
+        );
+
+        // Check role
+        if (merchant.getRole() != Role.MERCHANT) {
+            throw new RuntimeException(
+                    "Only merchants can view orders"
+            );
+        }
+
+        // Get all orders
+        List<Orders> allOrders = orderRepository.findAll();
+
+        // Store merchant's orders
+        List<Orders> merchantOrders = new ArrayList<>();
+
+        // Check every order
+        for (Orders order : allOrders) {
+
+            // Check every item in the order
+            for (OrderItems item : order.getOrderItems()) {
+
+                // Get product's merchant
+                Users productMerchant =
+                        item.getProduct().getMerchant();
+
+                // Check if product belongs to logged-in merchant
+                if (productMerchant != null &&
+                        productMerchant.getId()
+                                .equals(merchant.getId())) {
+
+                    merchantOrders.add(order);
+
+                    // Don't add same order twice
+                    break;
+                }
+            }
+        }
+
+        return merchantOrders;
     }
 }

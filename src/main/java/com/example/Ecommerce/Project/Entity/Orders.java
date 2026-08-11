@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor
@@ -42,6 +43,10 @@ public class Orders {
     @Enumerated(EnumType.STRING)
     private PaymentStatus paymentStatus = PaymentStatus.unpaid;
 
+
     private LocalDateTime orderDate;
+
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    private List<OrderItems> orderItems;
 
 }
