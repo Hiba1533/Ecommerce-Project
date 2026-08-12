@@ -52,7 +52,8 @@ public class SecurityConfig {
                                 "/orders/**",
                                 "/payment/**",
                                 "/cart/items/**",
-                                "/merchant/register"
+                                "/merchant/register",
+                                "/chat/**"
                         ).permitAll()
 
                         // Public GET endpoints
