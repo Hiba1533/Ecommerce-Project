@@ -1,28 +1,34 @@
 package com.example.Ecommerce.Project.Controller;
+
 import com.example.Ecommerce.Project.Entity.ChatMessage;
 import com.example.Ecommerce.Project.Service.ChatMessageService;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
-import org.springframework.stereotype.Service;
-import com.example.Ecommerce.Project.Service.ChatMessageService;
-
 
 @Controller
 public class ChatController {
 
     private final ChatMessageService chatMessageService;
+    private final SimpMessagingTemplate messagingTemplate;
 
     public ChatController(
-            ChatMessageService chatMessageService) {
+            ChatMessageService chatMessageService,
+            SimpMessagingTemplate messagingTemplate) {
 
         this.chatMessageService = chatMessageService;
+        this.messagingTemplate = messagingTemplate;
     }
 
     @MessageMapping("/sendMessage")
-    @SendTo("/topic/messages")
-    public ChatMessage sendMessage(ChatMessage message) {
+    public void sendMessage(ChatMessage message) {
 
-        return chatMessageService.saveMessage(message);
+        ChatMessage saved =
+                chatMessageService.saveMessage(message);
+
+        messagingTemplate.convertAndSend(
+                "/topic/messages",
+                saved
+        );
     }
 }

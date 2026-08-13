@@ -42,10 +42,6 @@ public class AdminController {
         return ordersService.getAllOrders();
     }
 
-    @PutMapping("/orders/{id}/refund")
-    public Orders refundOrder(@PathVariable Long id) {
-        return ordersService.refundOrder(id);
-    }
 
     @GetMapping("/merchants")
     public List<Users> getAllMerchants(){

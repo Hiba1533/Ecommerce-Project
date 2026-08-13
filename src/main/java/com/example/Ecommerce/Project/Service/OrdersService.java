@@ -126,6 +126,38 @@ public class OrdersService {
         return updatedOrder;
     }
 
+    public Orders refundOrderByMerchant(Long orderId, Authentication authentication) {
+
+        // Find logged-in merchant
+        Users merchant = userRepository.findByEmail(
+                authentication.getName()
+        ).orElseThrow(() ->
+                new RuntimeException("Merchant not found")
+        );
+
+        if (merchant.getRole() != Role.MERCHANT) {
+            throw new RuntimeException(
+                    "Only merchants can refund orders"
+            );
+        }
+
+        Orders order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Order not found"));
+
+        boolean ownsProductInOrder = order.getOrderItems().stream().anyMatch(
+                item -> item.getProduct().getMerchant() != null &&
+                        item.getProduct().getMerchant().getId().equals(merchant.getId())
+        );
+
+        if (!ownsProductInOrder) {
+            throw new RuntimeException(
+                    "You can only refund orders that include your own products"
+            );
+        }
+
+        return refundOrder(orderId);
+    }
+
     public List<Orders> getMerchantOrders(Authentication authentication) {
 
         // Find logged-in merchant

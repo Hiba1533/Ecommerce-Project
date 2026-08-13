@@ -37,5 +37,12 @@ public class MerchantController {
         return ordersService.getMerchantOrders(authentication);
     }
 
+    @PutMapping("/orders/{id}/refund")
+    public Orders refundOrder(
+            @PathVariable Long id,
+            Authentication authentication) {
+
+        return ordersService.refundOrderByMerchant(id, authentication);
+    }
 
 }
