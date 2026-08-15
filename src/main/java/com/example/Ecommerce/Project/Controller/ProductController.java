@@ -4,6 +4,9 @@ import com.example.Ecommerce.Project.Entity.Product;
 import com.example.Ecommerce.Project.Service.ProductService;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -16,8 +19,17 @@ public class ProductController {
         this.productService = productService;
     }
 
-    @PostMapping public Product addProduct( @RequestBody Product product, Authentication authentication){
-        return productService.addProduct( product, authentication );
+    @PostMapping(consumes = "multipart/form-data")
+    public Product addProduct(
+            @RequestPart("product") Product product,
+            @RequestPart(value = "image", required = false) MultipartFile image,
+            Authentication authentication) throws IOException {
+
+        return productService.addProduct(
+                product,
+                image,
+                authentication
+        );
     }
 
     @GetMapping
@@ -30,14 +42,28 @@ public class ProductController {
         return productService.getById(id);
     }
 
-    @PutMapping("/{id}")
-    public Product updateProduct(@PathVariable Long id,@RequestBody Product product, Authentication authentication){
-        return productService.updateProduct(id, product, authentication);
+    @PutMapping(value = "/{id}", consumes = "multipart/form-data")
+    public Product updateProduct(
+            @PathVariable Long id,
+            @RequestPart("product") Product product,
+            @RequestPart(value = "image", required = false) MultipartFile image,
+            Authentication authentication) throws IOException {
+
+        return productService.updateProduct(
+                id,
+                product,
+                image,
+                authentication
+        );
     }
 
     @DeleteMapping("/{id}")
-    public String deleteProduct(@PathVariable Long id, Authentication authentication){
+    public String deleteProduct(
+            @PathVariable Long id,
+            Authentication authentication) {
+
         productService.deleteProduct(id, authentication);
+
         return "product deleted";
     }
 }
