@@ -24,12 +24,7 @@ public class ProductController {
             @RequestPart("product") Product product,
             @RequestPart(value = "image", required = false) MultipartFile image,
             Authentication authentication) throws IOException {
-
-        return productService.addProduct(
-                product,
-                image,
-                authentication
-        );
+                 return productService.addProduct(product, image, authentication);
     }
 
     @GetMapping
@@ -43,27 +38,15 @@ public class ProductController {
     }
 
     @PutMapping(value = "/{id}", consumes = "multipart/form-data")
-    public Product updateProduct(
-            @PathVariable Long id,
-            @RequestPart("product") Product product,
-            @RequestPart(value = "image", required = false) MultipartFile image,
+    public Product updateProduct(@PathVariable Long id, @RequestPart("product") Product product,
+                                 @RequestPart(value = "image", required = false) MultipartFile image,
             Authentication authentication) throws IOException {
-
-        return productService.updateProduct(
-                id,
-                product,
-                image,
-                authentication
-        );
+                return productService.updateProduct(id, product, image, authentication);
     }
 
     @DeleteMapping("/{id}")
-    public String deleteProduct(
-            @PathVariable Long id,
-            Authentication authentication) {
-
+    public String deleteProduct(@PathVariable Long id, Authentication authentication) {
         productService.deleteProduct(id, authentication);
-
         return "product deleted";
     }
 }

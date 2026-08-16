@@ -33,7 +33,6 @@ public class MerchantController {
     @GetMapping("/orders")
     public List<Orders> getMerchantOrders(
             Authentication authentication) {
-
         return ordersService.getMerchantOrders(authentication);
     }
 
@@ -41,7 +40,6 @@ public class MerchantController {
     public Orders refundOrder(
             @PathVariable Long id,
             Authentication authentication) {
-
         return ordersService.refundOrderByMerchant(id, authentication);
     }
 

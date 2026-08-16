@@ -23,9 +23,7 @@ public class ChatController {
     @MessageMapping("/sendMessage")
     public void sendMessage(ChatMessage message) {
 
-        ChatMessage saved =
-                chatMessageService.saveMessage(message);
-
+        ChatMessage saved = chatMessageService.saveMessage(message);
         messagingTemplate.convertAndSend(
                 "/topic/messages",
                 saved

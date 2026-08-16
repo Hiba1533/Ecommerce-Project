@@ -27,9 +27,6 @@ public class Users {
     @Column(nullable = false, unique = true)
     private String email;
 
-    // Write-only: accepted on register/login requests, but never sent back
-    // out — otherwise the hash rides along on every Users object nested in
-    // chat messages, orders, etc.
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(nullable = false)
     private String password;

@@ -33,7 +33,7 @@ public class SecurityConfig {
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
-        http
+                 http
                 .cors(cors -> {})
                 .csrf(csrf -> csrf.disable())
 
@@ -44,11 +44,12 @@ public class SecurityConfig {
                 )
 
                 .authorizeHttpRequests(auth -> auth
-
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         // Public authentication endpoints
                         .requestMatchers(
                                 "/auth/register/**",
                                 "/auth/login/**",
+                                "/auth/me",
                                 "/orders/**",
                                 "/payment/**",
                                 "/cart/items/**",
@@ -70,7 +71,7 @@ public class SecurityConfig {
                         .requestMatchers("/merchant/**")
                         .hasRole("MERCHANT")
 
-                        // merchant product/category operations
+                        // merchant
                         .requestMatchers(
                                 HttpMethod.POST,
                                 "/product/**","/category/**"
@@ -126,7 +127,6 @@ public class SecurityConfig {
                 List.of("Authorization")
         );
 
-        // Required when using cookies
         configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source =

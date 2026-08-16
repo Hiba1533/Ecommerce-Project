@@ -7,6 +7,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/auth")
 public class UserController {
@@ -23,18 +25,10 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public String login(@RequestBody Users user,
-                        HttpServletResponse response) {
-
+    public String login(@RequestBody Users user, HttpServletResponse response) {
         String token = userService.login(user);
-
-        Users loggedInUser =
-                userService.getUserByEmail(user.getEmail());
-
-        response.setHeader(
-                "Authorization",
-                "Bearer " + token
-        );
+        Users loggedInUser = userService.getUserByEmail(user.getEmail());
+        response.setHeader("Authorization", "Bearer " + token);
 
         response.setHeader(
                 "User-Id",
@@ -50,29 +44,28 @@ public class UserController {
 
         return "Login success";
     }
-
     @GetMapping("/me")
     public Users getCurrentUser(Authentication authentication) {
-
         if (authentication == null) {
-            throw new RuntimeException("User not logged in");
+            return null;
         }
-
         return userService.getUserByEmail(
                 authentication.getName()
         );
     }
 
+    @GetMapping("/admins")
+    public List<Users> getAdmins() {
+        return userService.getAllAdmins();
+    }
+
     @PostMapping("/logout")
     public String logout(HttpServletResponse response) {
-
         Cookie cookie = new Cookie("jwt", "");
         cookie.setHttpOnly(true);
         cookie.setPath("/");
         cookie.setMaxAge(0);
-
         response.addCookie(cookie);
-
         return "Logout successful";
     }
 }
