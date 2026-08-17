@@ -37,6 +37,10 @@ public class CartItemsService {
         Cart cart = cartService.getOrCreateCart(user);
         Product product = productRepository.findById(productId).orElseThrow(() -> new RuntimeException("Product not found"));
 
+        if (product.getMerchant() != null && product.getMerchant().getId().equals(userId)) {
+            throw new RuntimeException("You cannot buy your own product");
+        }
+
         CartItems item = new CartItems();
         item.setCart(cart);
         item.setProduct(product);

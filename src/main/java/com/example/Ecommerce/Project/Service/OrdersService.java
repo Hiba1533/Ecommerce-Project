@@ -45,6 +45,16 @@ public class OrdersService {
         List<OrderItems> orderItems = new ArrayList<>();
         // Loop through cart
         for (CartItems item : cart.getCartItems()) {
+
+            Users productMerchant = item.getProduct().getMerchant();
+            if (productMerchant != null && productMerchant.getId().equals(userId)) {
+                throw new RuntimeException(
+                        "Your cart contains a product from your own shop (" +
+                                item.getProduct().getName() +
+                                "). Please remove it before placing the order."
+                );
+            }
+
             // Product price
             BigDecimal productPrice = item.getProduct().getPrice();
             // Quantity
