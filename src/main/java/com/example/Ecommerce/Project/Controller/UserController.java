@@ -61,6 +61,8 @@ public class UserController {
 
     @PostMapping("/logout")
     public String logout(HttpServletResponse response) {
+
+        //immediately delete cookie after user logout
         Cookie cookie = new Cookie("jwt", "");
         cookie.setHttpOnly(true);
         cookie.setPath("/");

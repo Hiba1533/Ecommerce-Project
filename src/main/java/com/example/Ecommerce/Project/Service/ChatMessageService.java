@@ -18,11 +18,9 @@ public class ChatMessageService {
         this.userRepository = userRepository;
     }
 
-    public ChatMessage saveMessage(ChatMessage message){
 
-        // The frontend only sends { id } for sender/receiver, so load the
-        // full Users rows here — otherwise username/email come back null
-        // in the broadcast and the UI can't show who sent what.
+    //saving msg content with sender and receiver and with time in db
+    public ChatMessage saveMessage(ChatMessage message){
         Users sender = userRepository.findById(message.getSender().getId())
                 .orElseThrow(() -> new RuntimeException("Sender not found"));
 

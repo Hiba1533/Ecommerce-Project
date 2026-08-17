@@ -19,7 +19,7 @@ public class CloudinaryService {
     public String uploadImage(MultipartFile file) throws IOException {
 
         Map result = cloudinary.uploader().upload(
-                file.getBytes(),
+                file.getBytes(), //takes uploaded file and convert into raw bytes
                 ObjectUtils.emptyMap()
         );
 
@@ -28,3 +28,7 @@ public class CloudinaryService {
 
 }
 
+//take image from frontend
+//upload to cloudinary
+//get image url
+//return url to product service
