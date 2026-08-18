@@ -20,7 +20,9 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
+        //backend to frontend
         registry.enableSimpleBroker("/topic");
+        //frontend to backend
         registry.setApplicationDestinationPrefixes("/app");
     }
 }

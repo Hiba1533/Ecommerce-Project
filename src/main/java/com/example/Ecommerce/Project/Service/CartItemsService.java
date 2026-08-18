@@ -33,19 +33,33 @@ public class CartItemsService {
     }
 
     public CartItems addToCart(Long userId, Long productId, Integer quantity) {
+        if (quantity == null || quantity < 1) {
+            throw new IllegalArgumentException("Quantity must be at least 1");
+        }
         Users user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
         Cart cart = cartService.getOrCreateCart(user);
         Product product = productRepository.findById(productId).orElseThrow(() -> new RuntimeException("Product not found"));
+
+        if (product.getStock() == null || product.getStock() < 1) {
+            throw new IllegalStateException("This product is out of stock");
+        }
 
         if (product.getMerchant() != null && product.getMerchant().getId().equals(userId)) {
             throw new RuntimeException("You cannot buy your own product");
         }
 
-        CartItems item = new CartItems();
+        CartItems item = cartItemsRepository.findByCartAndProductId(cart, productId).orElseGet(CartItems::new);
+        int existingQuantity = item.getId() == null ? 0 : item.getQuantity();
+        int requestedQuantity = existingQuantity + quantity;
+        if (requestedQuantity > product.getStock()) {
+            throw new IllegalArgumentException("Only " + product.getStock() + " items are available");
+        }
         item.setCart(cart);
         item.setProduct(product);
-        item.setQuantity(quantity);
-        item.setAddAt(LocalDateTime.now());
+        item.setQuantity(requestedQuantity);
+        if (item.getId() == null) {
+            item.setAddAt(LocalDateTime.now());
+        }
 
         return cartItemsRepository.save(item);
     }
@@ -59,6 +73,12 @@ public class CartItemsService {
 
     public CartItems updateQuantity(Long cartItemId, Integer quantity) {
         CartItems item = cartItemsRepository.findById(cartItemId).orElseThrow(() -> new RuntimeException("Cart item not found"));
+        if (quantity == null || quantity < 1) {
+            throw new IllegalArgumentException("Quantity must be at least 1");
+        }
+        if (quantity > item.getProduct().getStock()) {
+            throw new IllegalArgumentException("Only " + item.getProduct().getStock() + " items are available");
+        }
         item.setQuantity(quantity);
 
         return cartItemsRepository.save(item);

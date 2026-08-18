@@ -8,6 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.math.BigDecimal;
 
 @RestController
 @RequestMapping("/product")
@@ -30,6 +31,17 @@ public class ProductController {
     @GetMapping
     public List<Product> getProduct() {
         return productService.getProduct();
+    }
+
+    @GetMapping("/search")
+    public List<Product> searchProducts(
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) String category,
+            @RequestParam(required = false) BigDecimal minPrice,
+            @RequestParam(required = false) BigDecimal maxPrice,
+            @RequestParam(required = false) Boolean inStock,
+            @RequestParam(required = false, defaultValue = "featured") String sort) {
+        return productService.searchStorefrontProducts(search, category, minPrice, maxPrice, inStock, sort);
     }
 
     @GetMapping("/{id}")
